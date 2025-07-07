@@ -14,5 +14,7 @@ try:
     print(f"Poster: {response["Poster"]}")
     if response["Type"] == "series":
       print(f"Total seasons: {response["totalSeasons"]}")
+    else:
+       print(f"Movie")
 except Exception as e:
     print(f"\n⚠️ An error occurred: {str(e)}")
