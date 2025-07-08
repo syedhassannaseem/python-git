@@ -1,16 +1,26 @@
 {
-    "03": {
-        "ID": "03",
-        "Name": "sadf",
-        "Quantity": 23,
-        "Price": 234.0,
-        "Batch_No": "23"
+    "001": {
+        "Name": "Acidite",
+        "Quantity": 1000,
+        "Price": 170.0,
+        "Batch_No": "007"
     },
-    "4235": {
-        "ID": "4235",
-        "Name": "sfg",
-        "Quantity": 2342,
-        "Price": 2345.0,
-        "Batch_No": "dsf"
+    "002": {
+        "Name": "Eat",
+        "Quantity": 1000,
+        "Price": 200.0,
+        "Batch_No": "005"
+    },
+    "003": {
+        "Name": "Kufslay",
+        "Quantity": 1000,
+        "Price": 180.0,
+        "Batch_No": "007"
+    },
+    "004": {
+        "Name": "Amcivit",
+        "Quantity": 1000,
+        "Price": 200.0,
+        "Batch_No": "004"
     }
 }
