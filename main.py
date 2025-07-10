@@ -1,13 +1,15 @@
 import json 
 import os
+import win10toast
+import time
 
 INVENTORYFILE = "inventory.json"
 
-def dump_inventory(inventory):
+def dump_inventory(inventory): # Save inventory content in json file
         with open(INVENTORYFILE,"w") as g :
             json.dump(inventory , g ,indent=4)
 
-def load_inventory():
+def load_inventory():# Load inventory data 
     if os.path.exists(INVENTORYFILE):
      with open(INVENTORYFILE,"r") as h:
           return json.load(h)
@@ -15,7 +17,7 @@ def load_inventory():
          print("\n⚠️ Inventory Not Found!!\n")
     return {}
 
-def add_inventory():
+def add_inventory():# Add invenotry Products  
     inventory = load_inventory()
     ID = input("Enter Product ID: ")
 
@@ -44,7 +46,7 @@ def add_inventory():
     print("\n✅ Successfully Save Product Details!!\n")
 
 
-def view_inventory():
+def view_inventory(): # To see all Store Products in inventory 
 
     data = load_inventory()
 
@@ -62,7 +64,7 @@ def view_inventory():
         print("-" * 30)
     
 
-def deduction():
+def deduction(): # To deduct Product Quantity in invenotry
         data = load_inventory()
         num =input("Enter product ID ('Exit' for Quit): ")
         for ID , details in data.items():
@@ -85,13 +87,33 @@ def deduction():
         else:
             print("⚠️ Please Enter Correct Product ID🙏🏻")
 
-def delete():
+def delete(): # To delete all json file content
 
     with open(INVENTORYFILE, 'w') as file:
       json.dump({},file)
+    print(f"\n\nDone..... Now the json file is empty\n\n")
         
-
+def Notification():  # To Show Notification When Product reached to End
+    while True:
+        data = load_inventory()
+        to = win10toast.ToastNotifier()
+        try:
+            for ID , details in data.items():
+                if details["Quantity"] <= 100:
+                        to.show_toast(
+                            "⚠️ WARNING",
+                            f"➡️ The Products is running out soon",
+                            duration=3,
+                            threaded=True
+                        )
+                        print(f"➡️  {details["Name"]} is running low (Only {details["Quantity"]} left!)")
+                        print("-"*30)
+                        time.sleep(3.4)
+        except Exception as e:
+            print(f"{e}")
         
+        break
+Notification()
 
 while True:
     try:
@@ -101,7 +123,7 @@ while True:
         print("3- for deduct Quantity👀")
         print("4- for Exit🔚")
         print("5- for delete inventory content💥")
-        choice =  int(input("Enter Number between (1-4):"))
+        choice =  int(input("Enter Number between (1-5): "))
     except ValueError as v:
         print(f"\n⚠️ Enter Integer Number!! {v}")    
     if choice == 1:
@@ -117,7 +139,6 @@ while True:
         delete()
     else:
         print("⚠️ Please Enter Number between 1-5")
-
 
 
 
