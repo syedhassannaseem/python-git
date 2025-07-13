@@ -1,0 +1,26 @@
+{
+    "1": {
+        "product_id": "001",
+        "product_name": "aCIDETE",
+        "quantity": 200,
+        "unit_price": 140.0,
+        "total": 28000.0,
+        "date": "2025-07-13 21:37:24.847508"
+    },
+    "2": {
+        "product_id": "001",
+        "product_name": "aCIDETE",
+        "quantity": 1,
+        "unit_price": 140.0,
+        "total": 140.0,
+        "date": "2025-07-13 21:39:39.735633"
+    },
+    "3": {
+        "product_id": "001",
+        "product_name": "aCIDETE",
+        "quantity": 1,
+        "unit_price": 140.0,
+        "total": 140.0,
+        "date": "2025-07-13 21:49:54.375939"
+    }
+}

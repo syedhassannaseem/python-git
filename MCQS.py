@@ -111,7 +111,7 @@ mcqs = {
     }
 }
 a = 0
-for i in range(1,12):
+for i in range(1,len("queston_id")):
     question_id = i
     print(f"Question-{i}",mcqs[question_id]["question"])
     for option , text in mcqs[question_id]["options"].items():

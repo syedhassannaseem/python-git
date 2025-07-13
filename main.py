@@ -59,26 +59,36 @@ def view_inventory(): # To see all Store Products in inventory
         print(f"ID: {item_id}")
         print(f"Name: {details['Name']}")
         print(f"Quantity: {details['Quantity']}")
-        print(f"Price: ₹{details['Price']}")
+        print(f"Price: Rs{details['Price']}")
+        Total = details["Quantity"] * details["Price"]
+        print(f"Total Price is Rs{Total}")
         print(f"Batch no: {details['Batch_No']}")
         print("-" * 30)
     
 
-def deduction(): # To deduct Product Quantity in invenotry
+def Process_Sale(): # To deduct Product Quantity in invenotry
         data = load_inventory()
+        print("\n","-"*5,"Process Sale","-"*5,"\n")
         num =input("Enter product ID ('Exit' for Quit): ")
         for ID , details in data.items():
             if num.upper() == "EXIT":
                 print("Exiting...")
                 break
             if num == ID:
+                print(f"Product name is {details["Name"]}")
+                print(f"Available Quantity is: {details["Quantity"]}")
                 try:    
-                    subt = int(input("Enter deduct Quantity: "))
+                    subt = int(input("Enter Quantity to sell: "))
                 except ValueError as v:
                     print(f"⚠️ Enter Integer value only!!⭕⭕ {v}")
                 if subt >= 0:
                     details["Quantity"] -= subt
-                    print(f"Quantity: {details["Quantity"]}")
+                    total = subt * details["Price"]
+                    print("\n","-"*5,"Recipt","-"*5,"\n")
+                    print(f"Product name is {details["Name"]}")
+                    print(f"Quantity {subt}")
+                    print(f"Unit Price is Rs{details["Price"]}")
+                    print(f"Total Bill is Rs{total}")
                     with open(INVENTORYFILE,"w") as x:
                         json.dump(data , x , indent=4)
                 else:
@@ -87,7 +97,23 @@ def deduction(): # To deduct Product Quantity in invenotry
         else:
             print("⚠️ Please Enter Correct Product ID🙏🏻")
 
-def delete(): # To delete all json file content
+def Update():
+    data = load_inventory()
+    for ID,details in data.items():
+        id = input("Enter Product ID: ")
+        if ID == id:    
+            print(f"Current Quantity is {details["Quantity"]}")
+        else:
+            print("⚠️ Product Not Found!!!")
+            break     
+        scanf = int(input("Enter quantity to add/subtract (use - for subtraction): "))
+        details["Quantity"] += scanf
+        print(f"Update Quantity is {details["Quantity"]}")
+        with open(INVENTORYFILE,"w") as z:
+            json.dump(data , z ,indent=4)
+        break
+
+def delete(): # To delete all json file content 
 
     with open(INVENTORYFILE, 'w') as file:
       json.dump({},file)
@@ -99,7 +125,7 @@ def Notification():  # To Show Notification When Product reached to End
         to = win10toast.ToastNotifier()
         try:
             for ID , details in data.items():
-                if details["Quantity"] <= 100:
+                if details["Quantity"] <= 500:
                         to.show_toast(
                             "⚠️ WARNING",
                             f"➡️ The Products is running out soon",
@@ -111,19 +137,19 @@ def Notification():  # To Show Notification When Product reached to End
                         time.sleep(3.4)
         except Exception as e:
             print(f"{e}")
-        
         break
 Notification()
 
 while True:
     try:
         print("-"*50)
-        print("1- for Add Details⭕")
-        print("2- for View details👀")
-        print("3- for deduct Quantity👀")
-        print("4- for Exit🔚")
-        print("5- for delete inventory content💥")
-        choice =  int(input("Enter Number between (1-5): "))
+        print("1- Add Details⭕")
+        print("2- View details👀")
+        print("3- Process Sale👀")
+        print("4- Update Stock")
+        print("5- for Exit🔚")
+        print("6- Delete inventory content💥")
+        choice =  int(input("Enter Number between (1-6): "))
     except ValueError as v:
         print(f"\n⚠️ Enter Integer Number!! {v}")    
     if choice == 1:
@@ -131,14 +157,13 @@ while True:
     elif choice == 2:
         view_inventory()
     elif choice ==3:
-        deduction()
+        Process_Sale()
     elif choice == 4:
+        Update()
+    elif choice == 5:
         print("\nThank you for using the Inventory System!🫀")
         break
-    elif choice == 5:
+    elif choice == 6:
         delete()
     else:
-        print("⚠️ Please Enter Number between 1-5")
-
-
-
+        print("⚠️ Please Enter Number between 1-6")
