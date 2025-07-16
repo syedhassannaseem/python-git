@@ -203,7 +203,7 @@ Notification()
 
 while True:
     try:
-        print("-"*50)
+        print("-"*25,"Inventory Managment","-"*25)
         print("1- Add Details⭕")
         print("2- Process Sale👀")
         print("3- Update Stock")
