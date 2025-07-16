@@ -1,19 +1,19 @@
 {
     "001": {
         "Name": "Acidite",
-        "Quantity": 948,
+        "Quantity": 972,
         "Price": 170.0,
         "Batch_No": "120f"
     },
     "002": {
         "Name": "Eat",
-        "Quantity": 1000,
+        "Quantity": 965,
         "Price": 150.0,
         "Batch_No": "00df"
     },
     "003": {
         "Name": "kufslay",
-        "Quantity": 3000,
+        "Quantity": 2990,
         "Price": 150.0,
         "Batch_No": "2ds"
     },

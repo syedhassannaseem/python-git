@@ -1,260 +1,234 @@
-import json
+import json 
 import os
-import csv
+import win10toast
+import time
 from datetime import datetime
-from uuid import uuid4
-import getpass
+INVENTORYFILE = "inventory.json"
 
-class AdvancedInventorySystem:
-    def __init__(self):
-        self.products_file = "products.json"
-        self.sales_file = "sales.json"
-        self.users_file = "users.json"
-        self.suppliers_file = "suppliers.json"
-        self.backup_dir = "backups"
-        
-        # Create backup directory if not exists
-        os.makedirs(self.backup_dir, exist_ok=True)
-        
-        self.products = self.load_data(self.products_file)
-        self.sales = self.load_data(self.sales_file)
-        self.users = self.load_data(self.users_file)
-        self.suppliers = self.load_data(self.suppliers_file)
-        
-        # Default admin user if no users exist
-        if not self.users:
-            self.users["admin"] = {
-                "password": "admin123",
-                "role": "admin",
-                "full_name": "System Administrator"
-            }
-            self.save_data(self.users, self.users_file)
+def dump_inventory(inventory): # Save inventory content in json file
+        with open(INVENTORYFILE,"w") as g :
+            json.dump(inventory , g ,indent=4)
 
-    # === Core Functions ===
-    def load_data(self, filename):
-        if os.path.exists(filename):
-            with open(filename, 'r') as file:
-                return json.load(file)
-        return {}
+def load_inventory():# Load inventory data 
+    if os.path.exists(INVENTORYFILE):
+     with open(INVENTORYFILE,"r") as h:
+          return json.load(h)
+    else:
+         print("\n⚠️ Inventory Not Found!!\n")
+    return {}
 
-    def save_data(self, data, filename):
-        with open(filename, 'w') as file:
-            json.dump(data, file, indent=4)
+def add_inventory():# Add invenotry Products  
+    inventory = load_inventory()
+    ID = input("Enter Product ID: ")
 
-    def generate_id(self, prefix):
-        return f"{prefix}_{str(uuid4())[:8]}"
+    if ID in inventory:
+       print(f"⚠️ Product ID '{ID}' already exists!")
+       
 
-    # === Authentication ===
-    # def login(self):
-    #     print("\n=== Login ===")
-    #     username = input("Username: ")
-    #     password = getpass.getpass("Password: ")
-        
-    #     if username in self.users and self.users[username]["password"] == password:
-    #         self.current_user = username
-    #         self.user_role = self.users[username]["role"]
-    #         print(f"\nWelcome, {self.users[username]['full_name']} ({self.user_role})!")
-    #         return True
-    #     print("Invalid username or password!")
-    #     return False
+    else:
+        Name = input("Enter Product Name: ")
+        try:
+            Quantity = int(input("Enter Product Quantity: "))
+        except ValueError as v :
+            print(f"⚠️ Quantity is always Integer {v}")
+        try:
+            Price = float(input("Enter Product Price: "))
+        except ValueError as v:
+            print(f"⚠️ Price is always Integer/float Number {v}")
+        Batch_No = input("Enter Product Batch No: ")
 
-    # === Advanced Product Management ===
-    def add_product(self):
-        if self.user_role not in ["admin", "manager"]:
-            print("Permission denied!")
-            return
-            
-        print("\n--- Add New Product ---")
-        product_id = self.generate_id("PROD")
-        name = input("Enter product name: ")
-        price = float(input("Enter product price: "))
-        quantity = int(input("Enter initial quantity: "))
-        category = input("Enter product category: ")
-        supplier_id = input("Enter supplier ID (leave blank if none): ")
-        
-        if supplier_id and supplier_id not in self.suppliers:
-            print("Supplier not found!")
-            return
-            
-        self.products[product_id] = {
-            'name': name,
-            'price': price,
-            'quantity': quantity,
-            'category': category,
-            'supplier': supplier_id if supplier_id else None,
-            'reorder_level': int(input("Enter reorder level: ") or "5"),
-            'date_added': str(datetime.now()),
-            'last_updated': str(datetime.now())
+        inventory[ID] = {
+            "Name" : Name,
+            "Quantity" : Quantity,
+            "Price" : Price,
+            "Batch_No" : Batch_No 
         }
-        self.save_data(self.products, self.products_file)
-        print(f"Product added successfully! ID: {product_id}")
+        dump_inventory(inventory)
+        print("\n✅ Successfully Save Product Details!!\n")
 
-    def search_products(self):
-        print("\n--- Search Products ---")
-        search_term = input("Enter product name or ID to search: ").lower()
-        
-        found = False
-        for pid, product in self.products.items():
-            if (search_term in pid.lower() or 
-                search_term in product['name'].lower()):
-                found = True
-                print(f"\nID: {pid}")
-                print(f"Name: {product['name']}")
-                print(f"Price: ${product['price']:.2f}")
-                print(f"Stock: {product['quantity']}")
-                print(f"Category: {product['category']}")
-                
-        if not found:
-            print("No products found matching your search.")
 
-    # === Supplier Management ===
-    def add_supplier(self):
-        if self.user_role != "admin":
-            print("Permission denied!")
-            return
-            
-        print("\n--- Add New Supplier ---")
-        supplier_id = self.generate_id("SUPP")
-        name = input("Supplier name: ")
-        contact = input("Contact person: ")
-        phone = input("Phone number: ")
-        email = input("Email: ")
-        products = input("Products supplied (comma separated): ").split(',')
-        
-        self.suppliers[supplier_id] = {
-            'name': name,
-            'contact': contact,
-            'phone': phone,
-            'email': email,
-            'products': [p.strip() for p in products],
-            'date_added': str(datetime.now())
-        }
-        self.save_data(self.suppliers, self.suppliers_file)
-        print(f"Supplier added successfully! ID: {supplier_id}")
+def view_inventory(): # To see all Store Products in inventory 
 
-    # === Advanced Reporting ===
-    def generate_report(self):
-        print("\n--- Generate Report ---")
-        print("1. Inventory Summary")
-        print("2. Sales Report")
-        print("3. Low Stock Report")
-        print("4. Category-wise Report")
-        choice = input("Enter report type (1-4): ")
-        
-        report_date = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"report_{report_date}.csv"
-        
-        with open(filename, 'w', newline='') as file:
-            writer = csv.writer(file)
-            
-            if choice == '1':
-                writer.writerow(["ID", "Name", "Category", "Price", "Quantity", "Value"])
-                total_value = 0
-                for pid, product in self.products.items():
-                    value = product['price'] * product['quantity']
-                    writer.writerow([
-                        pid, product['name'], product['category'],
-                        product['price'], product['quantity'], value
-                    ])
-                    total_value += value
-                writer.writerow(["", "", "", "", "Total Value", total_value])
-                print(f"Inventory summary report generated: {filename}")
-                
-            elif choice == '2':
-                # Similar implementation for sales report
-                pass
-                
-            # Implement other report types similarly
+    data = load_inventory()
 
-    # === Data Backup ===
-    def backup_data(self):
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_file = os.path.join(self.backup_dir, f"backup_{timestamp}.json")
-        
-        all_data = {
-            'products': self.products,
-            'sales': self.sales,
-            'users': self.users,
-            'suppliers': self.suppliers
-        }
-        
-        with open(backup_file, 'w') as file:
-            json.dump(all_data, file, indent=4)
-            
-        print(f"Backup created successfully: {backup_file}")
+    if not data:
+          print("\n⚠️ No Items in Inventory\n")
 
-    # === User Management ===
-    def add_user(self):
-        if self.user_role != "admin":
-            print("Permission denied!")
-            return
-            
-        print("\n--- Add New User ---")
-        username = input("Enter username: ")
-        if username in self.users:
-            print("Username already exists!")
-            return
-            
-        full_name = input("Full name: ")
-        password = getpass.getpass("Password: ")
-        role = input("Role (admin/manager/staff): ")
-        
-        self.users[username] = {
-            "password": password,
-            "role": role,
-            "full_name": full_name
-        }
-        self.save_data(self.users, self.users_file)
-        print("User added successfully!")
+    print("\nCurrent Inventory:")
+    print("-" * 30)
+    for item_id, details in data.items():
+        print(f"ID: {item_id}")
+        print(f"Name: {details['Name']}")
+        print(f"Quantity: {details['Quantity']}")
+        print(f"Price: Rs{details['Price']}")
+        Total = details["Quantity"] * details["Price"]
+        print(f"Total Price is Rs{Total}")
+        print(f"Batch no: {details['Batch_No']}")
+        print("-" * 30)
 
-    # === Barcode Simulation ===
-    def barcode_scan(self):
-        print("\n--- Barcode Scanner ---")
-        print("Simulating barcode scanner...")
-        barcode = input("Enter product ID or barcode: ")
-        
-        if barcode in self.products:
-            product = self.products[barcode]
-            print(f"\nProduct Found:")
-            print(f"Name: {product['name']}")
-            print(f"Price: ${product['price']:.2f}")
-            print(f"Stock: {product['quantity']}")
-            return barcode
+
+def Update():
+    data = load_inventory()
+    for ID,details in data.items():
+        id = input("Enter Product ID: ")
+        if ID == id:    
+            print(f"Current Quantity is {details["Quantity"]}")
         else:
-            print("Product not found in inventory!")
-            return None
+            print("⚠️ Product Not Found!!!")
+            break
+        try:    
+            scanf = int(input("Enter quantity to add/subtract (use - for subtraction): "))
+        except ValueError as v:
+            print(f"\nEnter Integer Value {v}\n")
+            break 
+        details["Quantity"] += scanf
+        print(f"Update Quantity is {details["Quantity"]}")
+        with open(INVENTORYFILE,"w") as z:
+            json.dump(data , z ,indent=4)
+        break
 
-    # === Main Menu ===
-    def run(self):
-        if not self.login():
-            return
-            
-        while True:
-            print("\n=== Advanced Inventory System ===")
-            print(f"Logged in as: {self.current_user} ({self.user_role})")
-            print("\n1. Product Management")
-            print("2. Sales Processing")
-            print("3. Supplier Management")
-            print("4. Reports")
-            print("5. User Management")
-            print("6. System Utilities")
-            print("7. Logout")
-            
-            choice = input("Enter your choice (1-7): ")
-            
-            if choice == '1':
-                # Product management submenu
-                pass
-            elif choice == '2':
-                # Sales processing submenu
-                pass
-            # Implement other menu options similarly
-            elif choice == '7':
-                print("Logging out...")
+
+def delete(): # To delete all json file content 
+
+    with open(INVENTORYFILE, 'w') as file:
+      json.dump({},file)
+    print(f"\n\nDone..... Now the json file is empty\n\n")
+
+ # History Sale Managment Code
+
+
+HISTORY = "Sales_History.json"
+
+def dump_Sale(sale): # Save inventory content in json file
+        with open(HISTORY,"w") as g :
+            json.dump(sale , g ,indent=4)
+
+def load_Sale():# Load inventory data 
+    if os.path.exists(HISTORY):
+     with open(HISTORY,"r") as h:
+          return json.load(h)
+    else:
+         print("\n⚠️ Inventory Not Found!!\n")
+    return {}
+
+
+def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale History
+        data = load_inventory()
+        history = load_Sale()
+        print("\n","-"*5,"Process Sale","-"*5,"\n")
+        num =input("Enter product ID ('Exit' for Quit): ")
+        for ID , details in data.items():
+            if num.upper() == "EXIT":
+                print("Exiting...")
                 break
-            else:
-                print("Invalid choice!")
+            if num == ID:
+                print(f"Product name is {details["Name"]}")
+                print(f"Available Quantity is: {details["Quantity"]}")
+                city = input("Enter City Name: ")
+                try:    
+                    subt = int(input("Enter Quantity to sell: "))
+                except ValueError as v:
+                    print(f"⚠️ Enter Integer value only!!⭕⭕ {v}")
+                    break
+                if subt >= 0:
+                    details["Quantity"] -= subt
+                    total = subt * details["Price"]
+                    print("\n","-"*5,"Recipt","-"*5,"\n")
+                    print(f"City {city}")
+                    print(f"Product name is {details["Name"]}")
+                    print(f"Quantity {subt}")
+                    print(f"Unit Price is Rs{details["Price"]}")
+                    print(f"Total Bill is Rs{total}")
+                    with open(INVENTORYFILE,"w") as x:
+                        json.dump(data , x , indent=4)
+                    #Sales History Save Code
+                    history[ID]= {
+                        "City": city,
+                        "Name" : details["Name"],
+                        "Quantity": subt,
+                        "Unit_Price":details["Price"],
+                        "Total_Price": subt * details["Price"],
+                        "Date" : time.strftime("%d""-%B-""%Y"),
+                        "Time": str(datetime.now().time())
+                    }
+                    dump_Sale(history)
+                else:
+                    print("⚠️ Enter Positive Number🔢")
+                break
+        else:
+            print("⚠️ Please Enter Correct Product ID🙏🏻")
+def View_history(): # To see all Store Products in inventory 
 
-if __name__ == "__main__":
-    system = AdvancedInventorySystem()
-    system.run()
+    data = load_Sale()
+
+    if not data:
+          print("\n⚠️ No Items in Inventory\n")
+
+    print("\nSales History:")
+    print("-" * 30)
+    for  ID,details in data.items():
+        print(f"ID: {ID}")
+        print(f"City: {details["City"]}")
+        print(f"Name: {details['Name']}")
+        print(f"Quantity: {details['Quantity']}")
+        print(f"Price: Rs{details['Unit_Price']}")
+        print(f"Price: Rs{details['Total_Price']}")
+        print(f"Time: {details["Time"]}")
+        print(f"Date: {details["Date"]}")
+        print("-" * 30)
+
+
+# Notification pop Code 
+
+def Notification():  # To Show Notification When Product reached to End
+    while True:
+        data = load_inventory()
+        to = win10toast.ToastNotifier()
+        try:
+            for ID , details in data.items():
+                if details["Quantity"] <= 500:
+                        to.show_toast(
+                            "⚠️ WARNING",
+                            f"➡️ The Products is running out soon",
+                            duration=3,
+                            threaded=True
+                        )
+                        print(f"\n➡️  {details["Name"]} is running low (Only {details["Quantity"]} left!)")
+                        print("-"*30)
+                        time.sleep(3.4)
+        except Exception as e:
+            print(f"{e}")
+        break
+Notification()
+
+while True:
+    try:
+        print("-"*50)
+        print("1- Add Details⭕")
+        print("2- Process Sale👀")
+        print("3- Update Stock")
+        print("4- View Inventory👀")
+        print("5- View history")
+        print("6- Delete inventory content💥")
+        print("7- for Exit🔚")
+        choice =  int(input("Enter Number between (1-7): "))
+    except ValueError as v:
+        print(f"\n⚠️ Enter Integer Number!! {v}")   
+        continue 
+    if choice == 1:
+        add_inventory()
+    elif choice == 2:
+        Process_Sale()
+    elif choice ==3:
+        Update()
+    elif choice == 4:
+        view_inventory()
+    elif choice == 5:
+        View_history()
+    elif choice == 6:
+        delete()
+    elif choice == 7:
+        print("\nThank you for using the Inventory System!🫀")
+        break
+    else:
+        print("⚠️ Please Enter Number between 1-7")
