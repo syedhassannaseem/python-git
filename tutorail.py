@@ -142,7 +142,7 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
                     with open(INVENTORYFILE,"w") as x:
                         json.dump(data , x , indent=4)
                     #Sales History Save Code
-                    history[ID]= {
+                    history[True]= {
                         "City": city,
                         "Name" : details["Name"],
                         "Quantity": subt,
@@ -157,7 +157,7 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
                 break
         else:
             print("⚠️ Please Enter Correct Product ID🙏🏻")
-def View_history(): # To see all Store Products in inventory 
+def View_history(): # To see Sales History
 
     data = load_Sale()
 
@@ -203,7 +203,7 @@ Notification()
 
 while True:
     try:
-        print("-"*50)
+        print("-"*25,"Inventory Managment System","-"*25)
         print("1- Add Details⭕")
         print("2- Process Sale👀")
         print("3- Update Stock")

@@ -1,38 +1,44 @@
 {
     "001": {
         "Name": "Acidite",
-        "Quantity": 972,
+        "Quantity": 750,
         "Price": 170.0,
-        "Batch_No": "120f"
+        "Batch_No": "00u"
     },
     "002": {
         "Name": "Eat",
-        "Quantity": 965,
+        "Quantity": 778,
         "Price": 150.0,
         "Batch_No": "00df"
     },
     "003": {
         "Name": "kufslay",
-        "Quantity": 2990,
+        "Quantity": 2928,
         "Price": 150.0,
         "Batch_No": "2ds"
     },
     "004": {
         "Name": "Amcivit",
-        "Quantity": 2500,
+        "Quantity": 2395,
         "Price": 150.0,
         "Batch_No": "df52"
     },
     "005": {
         "Name": "Lax",
-        "Quantity": 2210,
+        "Quantity": 2200,
         "Price": 180.0,
         "Batch_No": "d52f"
     },
     "006": {
         "Name": "Algas",
-        "Quantity": 1100,
+        "Quantity": 1091,
         "Price": 540.0,
         "Batch_No": "0df1"
+    },
+    "008": {
+        "Name": "Vomino",
+        "Quantity": 4500,
+        "Price": 540.0,
+        "Batch_No": "0f"
     }
 }

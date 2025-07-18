@@ -94,8 +94,8 @@ def delete(): # To delete all json file content
       json.dump({},file)
     print(f"\n\nDone..... Now the json file is empty\n\n")
 
- # History Sale Managment Code
 
+ # History Sale Managment Code
 
 HISTORY = "Sales_History.json"
 
@@ -143,6 +143,7 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
                         json.dump(data , x , indent=4)
                     #Sales History Save Code
                     history[ID]= {
+                        "ID": ID,
                         "City": city,
                         "Name" : details["Name"],
                         "Quantity": subt,
@@ -157,14 +158,14 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
                 break
         else:
             print("⚠️ Please Enter Correct Product ID🙏🏻")
-def View_history(): # To see all Store Products in inventory 
+def View_history(): # To see Sales History
 
     data = load_Sale()
 
     if not data:
           print("\n⚠️ No Items in Inventory\n")
 
-    print("\nSales History:")
+    print("\n","-" * 30,"Sales History:","-" * 30)
     print("-" * 30)
     for  ID,details in data.items():
         print(f"ID: {ID}")
@@ -202,33 +203,33 @@ def Notification():  # To Show Notification When Product reached to End
 Notification()
 
 while True:
-    try:
-        print("-"*25,"Inventory Managment","-"*25)
-        print("1- Add Details⭕")
-        print("2- Process Sale👀")
-        print("3- Update Stock")
-        print("4- View Inventory👀")
-        print("5- View history")
-        print("6- Delete inventory content💥")
-        print("7- for Exit🔚")
-        choice =  int(input("Enter Number between (1-7): "))
-    except ValueError as v:
-        print(f"\n⚠️ Enter Integer Number!! {v}")   
-        continue 
-    if choice == 1:
-        add_inventory()
-    elif choice == 2:
-        Process_Sale()
-    elif choice ==3:
-        Update()
-    elif choice == 4:
-        view_inventory()
-    elif choice == 5:
-        View_history()
-    elif choice == 6:
-        delete()
-    elif choice == 7:
-        print("\nThank you for using the Inventory System!🫀")
-        break
-    else:
-        print("⚠️ Please Enter Number between 1-7")
+        try:
+            print("-"*25,"Inventory Managment System","-"*25)
+            print("1- Add Details⭕")
+            print("2- Process Sale👀")
+            print("3- Update Stock")
+            print("4- View Inventory👀")
+            print("5- View history")
+            print("6- Delete inventory content💥")
+            print("7- for Exit🔚")
+            choice =  int(input("Enter Number between (1-7): "))
+        except ValueError as v:
+            print(f"\n⚠️ Enter Integer Number!! {v}")   
+            continue 
+        if choice == 1:
+            add_inventory()
+        elif choice == 2:
+            Process_Sale()
+        elif choice ==3:
+            Update()
+        elif choice == 4:
+            view_inventory()
+        elif choice == 5:
+            View_history()
+        elif choice == 6:
+            delete()
+        elif choice == 7:
+            print("\nThank you for using the Inventory System!🫀")
+            break
+        else:
+            print("⚠️ Please Enter Number between 1-7")

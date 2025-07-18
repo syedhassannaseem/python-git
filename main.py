@@ -21,30 +21,27 @@ def add_inventory():# Add invenotry Products
     inventory = load_inventory()
     ID = input("Enter Product ID: ")
 
-    if ID in inventory:
-       print(f"⚠️ Product ID '{ID}' already exists!")
        
 
-    else:
-        Name = input("Enter Product Name: ")
-        try:
-            Quantity = int(input("Enter Product Quantity: "))
-        except ValueError as v :
-            print(f"⚠️ Quantity is always Integer {v}")
-        try:
-            Price = float(input("Enter Product Price: "))
-        except ValueError as v:
-            print(f"⚠️ Price is always Integer/float Number {v}")
-        Batch_No = input("Enter Product Batch No: ")
+    Name = input("Enter Product Name: ")
+    try:
+        Quantity = int(input("Enter Product Quantity: "))
+    except ValueError as v :
+        print(f"⚠️ Quantity is always Integer {v}")
+    try:
+        Price = float(input("Enter Product Price: "))
+    except ValueError as v:
+        print(f"⚠️ Price is always Integer/float Number {v}")
+    Batch_No = input("Enter Product Batch No: ")
 
-        inventory[ID] = {
-            "Name" : Name,
-            "Quantity" : Quantity,
-            "Price" : Price,
-            "Batch_No" : Batch_No 
-        }
-        dump_inventory(inventory)
-        print("\n✅ Successfully Save Product Details!!\n")
+    inventory[ID] = {
+        "Name" : Name,
+        "Quantity" : Quantity,
+        "Price" : Price,
+        "Batch_No" : Batch_No 
+    }
+    dump_inventory(inventory)
+    print("\n✅ Successfully Save Product Details!!\n")
 
 
 def view_inventory(): # To see all Store Products in inventory 
@@ -157,7 +154,7 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
                 break
         else:
             print("⚠️ Please Enter Correct Product ID🙏🏻")
-def View_history(): # To see all Store Products in inventory 
+def View_history(): # To see Sales History
 
     data = load_Sale()
 
@@ -203,7 +200,7 @@ Notification()
 
 while True:
     try:
-        print("-"*50)
+        print("-"*25,"Inventory Managment System","-"*25)
         print("1- Add Details⭕")
         print("2- Process Sale👀")
         print("3- Update Stock")
