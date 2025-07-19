@@ -9,13 +9,14 @@
         "Time": "20:55:04.341684"
     },
     "002": {
-        "City": "df",
+        "ID": "002",
+        "City": "Bahawalpur",
         "Name": "Eat",
-        "Quantity": 7,
+        "Quantity": 150,
         "Unit_Price": 150.0,
-        "Total_Price": 1050.0,
-        "Date": "18-July-2025",
-        "Time": "20:55:28.837558"
+        "Total_Price": 22500.0,
+        "Date": "19-July-2025",
+        "Time": "21:02:53.664118"
     },
     "003": {
         "City": "ff",
@@ -54,15 +55,6 @@
         "Time": "20:55:47.117735"
     },
     "true": {
-        "City": "sdf",
-        "Name": "Algas",
-        "Quantity": 5,
-        "Unit_Price": 540.0,
-        "Total_Price": 2700.0,
-        "Date": "18-July-2025",
-        "Time": "20:56:37.189960"
-    },
-    "true": {
         "City": "dfsa",
         "Name": "Lax",
         "Quantity": 5,
@@ -70,5 +62,85 @@
         "Total_Price": 900.0,
         "Date": "18-July-2025",
         "Time": "20:56:55.381889"
+    },
+    "45f": {
+        "ID": "001",
+        "City": "Bahawalpur",
+        "Name": "Acidite",
+        "Quantity": 150,
+        "Unit_Price": 170.0,
+        "Total_Price": 25500.0,
+        "Date": "19-July-2025",
+        "Time": "21:11:34.417285"
+    },
+    "z": {
+        "ID": "001",
+        "City": "Bahawalpur",
+        "Name": "Acidite",
+        "Quantity": 150,
+        "Unit_Price": 170.0,
+        "Total_Price": 25500.0,
+        "Date": "19-July-2025",
+        "Time": "21:16:36.106906"
+    },
+    "McAc": {
+        "ID": "005",
+        "City": "Lahore",
+        "Name": "Lax",
+        "Quantity": 14,
+        "Unit_Price": 180.0,
+        "Total_Price": 2520.0,
+        "Date": "19-July-2025",
+        "Time": "21:18:04.786998"
+    },
+    "fDeB": {
+        "ID": "001",
+        "City": "bwp",
+        "Name": "Acidite",
+        "Quantity": 45,
+        "Unit_Price": 170.0,
+        "Total_Price": 7650.0,
+        "Date": "19-July-2025",
+        "Time": "21:18:46.547021"
+    },
+    "OzSU": {
+        "ID": "001",
+        "City": "khr",
+        "Name": "Acidite",
+        "Quantity": 4,
+        "Unit_Price": 170.0,
+        "Total_Price": 680.0,
+        "Date": "19-July-2025",
+        "Time": "21:18:56.675423"
+    },
+    "Cqnp": {
+        "ID": "001",
+        "City": "ing",
+        "Name": "Acidite",
+        "Quantity": 45,
+        "Unit_Price": 170.0,
+        "Total_Price": 7650.0,
+        "Date": "19-July-2025",
+        "Time": "21:20:01.779393"
+    },
+    "UuyH": {
+        "ID": "001",
+        "City": "ki\\",
+        "Name": "Acidite",
+        "Quantity": 7,
+        "Unit_Price": 170.0,
+        "Total_Price": 1190.0,
+        "Date": "19-July-2025",
+        "Time": "21:20:10.843256"
+    },
+    "SOHj": {
+        "ID": "001",
+        "City": "lodhra",
+        "Name": "Acidite",
+        "Quantity": 5,
+        "Unit_Price": 170.0,
+        "Total_Price": 850.0,
+        "Date": "19-July-2025",
+        "Time": "21:24:37.546593"
     }
 }

@@ -3,6 +3,8 @@ import os
 import win10toast
 import time
 from datetime import datetime
+import random
+import string
 INVENTORYFILE = "inventory.json"
 
 def dump_inventory(inventory): # Save inventory content in json file
@@ -92,7 +94,7 @@ def delete(): # To delete all json file content
 
     with open(INVENTORYFILE, 'w') as file:
       json.dump({},file)
-    print(f"\n\nDone..... Now the json file is empty\n\n")
+    print(f"\n\nDone..... Now the json file is empty👍🏻\n\n")
 
 
  # History Sale Managment Code
@@ -142,7 +144,14 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
                     with open(INVENTORYFILE,"w") as x:
                         json.dump(data , x , indent=4)
                     #Sales History Save Code
-                    history[ID]= {
+                    uap =string.ascii_uppercase
+                    lap =string.ascii_lowercase
+                    bap =string.ascii_letters
+
+                    al = uap +lap + bap
+
+                    invo = ''.join(random.choice(al) for _ in range(0,4))
+                    history[invo]= {
                         "ID": ID,
                         "City": city,
                         "Name" : details["Name"],
@@ -165,7 +174,7 @@ def View_history(): # To see Sales History
     if not data:
           print("\n⚠️ No Items in Inventory\n")
 
-    print("\n","-" * 30,"Sales History:","-" * 30)
+    print("\n","-" * 30,"Sales History:","-" * 30,"\n")
     print("-" * 30)
     for  ID,details in data.items():
         print(f"ID: {ID}")
