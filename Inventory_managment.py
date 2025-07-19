@@ -170,7 +170,6 @@ def Process_Sale(): # To deduct Product Quantity in invenotry and Generate Sale 
 def View_history(): # To see Sales History
 
     data = load_Sale()
-    nin = load_inventory()
 
     if not data:
           print("\n⚠️ No Items in Inventory\n")

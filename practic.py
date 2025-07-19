@@ -1,16 +1,17 @@
+import tkinter as tk
+from tkinter import ttk, messagebox, scrolledtext
 import json
 import os
-import win10toast
-import time
-from datetime import datetime
 import random
 import string
-import tkinter as tk
-from tkinter import ttk, messagebox
+import time
+from datetime import datetime
 
+# File names
 INVENTORYFILE = "inventory.json"
 HISTORY = "Sales_History.json"
 
+# Load and Dump Functions
 def dump_inventory(inventory):
     with open(INVENTORYFILE, "w") as g:
         json.dump(inventory, g, indent=4)
@@ -31,226 +32,213 @@ def load_Sale():
             return json.load(h)
     return {}
 
-def Notification():
-    data = load_inventory()
-    to = win10toast.ToastNotifier()
-    for ID, details in data.items():
-        if details["Quantity"] <= 500:
-            to.show_toast(
-                "⚠️ WARNING",
-                f"➡️ {details['Name']} is running low (Only {details['Quantity']} left!)",
-                duration=3,
-                threaded=True
-            )
-            time.sleep(3.4)
-
-class InventoryApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Inventory Management System")
-        self.geometry("800x600")
-        self.configure(bg="#f0f0f0")
+# GUI Application
+class InventoryApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Inventory Management System")
+        self.root.geometry("900x600")
+        self.root.configure(bg="#f4f6f7")
         self.create_widgets()
-        Notification()
 
     def create_widgets(self):
-        self.main_menu()
+        title = tk.Label(self.root, text="Inventory Management System", font=("Arial", 20, "bold"), bg="#2e86de", fg="white", pady=10)
+        title.pack(fill=tk.X)
 
-    def main_menu(self):
-        for widget in self.winfo_children():
-            widget.destroy()
-
-        tk.Label(self, text="Inventory Management System", font=("Arial", 20, "bold"), bg="#f0f0f0").pack(pady=20)
+        button_frame = tk.Frame(self.root, bg="#dcdde1")
+        button_frame.pack(fill=tk.X, pady=5)
 
         buttons = [
-            ("Add Product", self.add_inventory_ui),
-            ("Process Sale", self.process_sale_ui),
-            ("Update Stock", self.update_stock_ui),
-            ("View Inventory", self.view_inventory_ui),
-            ("View Sales History", self.view_history_ui),
-            ("Delete Inventory", self.delete_inventory_ui),
-            ("Exit", self.quit)
+            ("Add Product", self.add_inventory),
+            ("Process Sale", self.process_sale),
+            ("Update Stock", self.update_stock),
+            ("View Inventory", self.view_inventory),
+            ("View History", self.view_history),
+            ("Delete Inventory", self.delete_inventory)
         ]
 
         for text, command in buttons:
-            tk.Button(self, text=text, width=25, height=2, command=command, bg="#4CAF50", fg="white").pack(pady=10)
+            tk.Button(button_frame, text=text, command=command, font=("Arial", 11), bg="#0984e3", fg="white", width=15).pack(side=tk.LEFT, padx=5, pady=5)
 
-    def back_to_menu(self):
-        self.main_menu()
+        self.output = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, height=25, font=("Arial", 10))
+        self.output.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-    def add_inventory_ui(self):
-        self.clear_widgets()
+    def print_output(self, text):
+        self.output.delete(1.0, tk.END)
+        self.output.insert(tk.END, text)
 
-        tk.Label(self, text="Add New Product", font=("Arial", 16)).pack(pady=10)
+    def add_inventory(self):
+        def save():
+            ID = entry_id.get()
+            Name = entry_name.get()
+            Quantity = entry_qty.get()
+            Price = entry_price.get()
+            Batch_No = entry_batch.get()
+
+            if not ID or not Name or not Quantity or not Price or not Batch_No:
+                messagebox.showerror("Input Error", "All fields are required!")
+                return
+
+            try:
+                Quantity = int(Quantity)
+                Price = float(Price)
+            except ValueError:
+                messagebox.showerror("Input Error", "Quantity must be integer and Price must be float!")
+                return
+
+            inventory = load_inventory()
+            if ID in inventory:
+                messagebox.showerror("Error", f"Product ID '{ID}' already exists!")
+                return
+
+            inventory[ID] = {
+                "Name": Name,
+                "Quantity": Quantity,
+                "Price": Price,
+                "Batch_No": Batch_No
+            }
+            dump_inventory(inventory)
+            messagebox.showinfo("Success", "Product added successfully!")
+            top.destroy()
+
+        top = tk.Toplevel(self.root)
+        top.title("Add Product")
+        top.geometry("350x300")
+        top.configure(bg="#dfe6e9")
 
         labels = ["Product ID", "Name", "Quantity", "Price", "Batch No"]
-        entries = {}
+        entries = []
 
-        for label in labels:
-            tk.Label(self, text=label).pack()
-            entry = tk.Entry(self)
-            entry.pack()
-            entries[label] = entry
+        for i, label in enumerate(labels):
+            tk.Label(top, text=label, bg="#dfe6e9").grid(row=i, column=0, padx=10, pady=5, sticky="e")
+        entry_id = tk.Entry(top); entry_id.grid(row=0, column=1)
+        entry_name = tk.Entry(top); entry_name.grid(row=1, column=1)
+        entry_qty = tk.Entry(top); entry_qty.grid(row=2, column=1)
+        entry_price = tk.Entry(top); entry_price.grid(row=3, column=1)
+        entry_batch = tk.Entry(top); entry_batch.grid(row=4, column=1)
 
-        def save():
-            inventory = load_inventory()
-            ID = entries["Product ID"].get()
-            if ID in inventory:
-                messagebox.showerror("Error", "Product ID already exists!")
+        tk.Button(top, text="Save", command=save, bg="#00cec9", fg="white", width=15).grid(row=5, columnspan=2, pady=15)
+
+    def process_sale(self):
+        inventory = load_inventory()
+        history = load_Sale()
+
+        def process():
+            ID = entry_id.get()
+            city = entry_city.get()
+            qty = entry_qty.get()
+
+            if ID not in inventory:
+                messagebox.showerror("Error", "Product ID not found!")
                 return
+
             try:
-                inventory[ID] = {
-                    "Name": entries["Name"].get(),
-                    "Quantity": int(entries["Quantity"].get()),
-                    "Price": float(entries["Price"].get()),
-                    "Batch_No": entries["Batch No"].get()
-                }
+                qty = int(qty)
             except ValueError:
-                messagebox.showerror("Error", "Quantity and Price must be numbers")
+                messagebox.showerror("Error", "Quantity must be integer!")
                 return
 
+            product = inventory[ID]
+            if qty <= 0 or qty > product["Quantity"]:
+                messagebox.showerror("Error", "Invalid quantity!")
+                return
+
+            product["Quantity"] -= qty
+            total = qty * product["Price"]
             dump_inventory(inventory)
-            messagebox.showinfo("Success", "Product added successfully")
-            self.back_to_menu()
 
-        tk.Button(self, text="Save", command=save, bg="#4CAF50", fg="white").pack(pady=10)
-        tk.Button(self, text="Back", command=self.back_to_menu).pack()
+            invoice_id = ''.join(random.choices(string.ascii_letters, k=4))
+            history[invoice_id] = {
+                "ID": ID,
+                "City": city,
+                "Name": product["Name"],
+                "Quantity": qty,
+                "Unit_Price": product["Price"],
+                "Total_Price": total,
+                "Date": time.strftime("%d-%B-%Y"),
+                "Time": str(datetime.now().time())
+            }
+            dump_Sale(history)
 
-    def view_inventory_ui(self):
-        self.clear_widgets()
+            messagebox.showinfo("Sale Processed", f"Sold {qty} units of {product['Name']} for Rs{total}")
+            top.destroy()
 
-        tk.Label(self, text="Current Inventory", font=("Arial", 16)).pack(pady=10)
+        top = tk.Toplevel(self.root)
+        top.title("Process Sale")
+        top.geometry("350x250")
+        top.configure(bg="#ffeaa7")
 
-        tree = ttk.Treeview(self, columns=("ID", "Name", "Quantity", "Price", "Total", "Batch"), show="headings")
-        for col in tree["columns"]:
-            tree.heading(col, text=col)
-            tree.column(col, anchor="center")
-        tree.pack(fill="both", expand=True)
+        tk.Label(top, text="Product ID:", bg="#ffeaa7").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+        entry_id = tk.Entry(top); entry_id.grid(row=0, column=1)
 
-        data = load_inventory()
-        for ID, d in data.items():
-            total = d["Quantity"] * d["Price"]
-            tree.insert('', 'end', values=(ID, d["Name"], d["Quantity"], d["Price"], total, d["Batch_No"]))
+        tk.Label(top, text="City:", bg="#ffeaa7").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+        entry_city = tk.Entry(top); entry_city.grid(row=1, column=1)
 
-        tk.Button(self, text="Back", command=self.back_to_menu).pack(pady=10)
+        tk.Label(top, text="Quantity:", bg="#ffeaa7").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+        entry_qty = tk.Entry(top); entry_qty.grid(row=2, column=1)
 
-    def view_history_ui(self):
-        self.clear_widgets()
+        tk.Button(top, text="Process", command=process, bg="#e17055", fg="white", width=15).grid(row=3, columnspan=2, pady=20)
 
-        tk.Label(self, text="Sales History", font=("Arial", 16)).pack(pady=10)
-
-        tree = ttk.Treeview(self, columns=("ID", "City", "Name", "Quantity", "Unit Price", "Total Price", "Date", "Time"), show="headings")
-        for col in tree["columns"]:
-            tree.heading(col, text=col)
-            tree.column(col, anchor="center")
-        tree.pack(fill="both", expand=True)
-
-        data = load_Sale()
-        for ID, d in data.items():
-            if all(k in d for k in ["ID", "City", "Name", "Quantity", "Unit_Price", "Total_Price", "Date", "Time"]):
-                tree.insert('', 'end', values=(d["ID"], d["City"], d["Name"], d["Quantity"], d["Unit_Price"], d["Total_Price"], d["Date"], d["Time"]))
-
-        tk.Button(self, text="Back", command=self.back_to_menu).pack(pady=10)
-
-    def process_sale_ui(self):
-        self.clear_widgets()
-
-        tk.Label(self, text="Process Sale", font=("Arial", 16)).pack(pady=10)
-        tk.Label(self, text="Enter Product ID:").pack()
-        product_entry = tk.Entry(self)
-        product_entry.pack()
-
-        tk.Label(self, text="Enter City:").pack()
-        city_entry = tk.Entry(self)
-        city_entry.pack()
-
-        tk.Label(self, text="Enter Quantity:").pack()
-        qty_entry = tk.Entry(self)
-        qty_entry.pack()
-
-        def sell():
-            ID = product_entry.get()
-            city = city_entry.get()
-            try:
-                qty = int(qty_entry.get())
-            except ValueError:
-                messagebox.showerror("Error", "Quantity must be an integer")
-                return
-
-            data = load_inventory()
-            history = load_Sale()
-
-            if ID in data:
-                if qty > 0 and data[ID]["Quantity"] >= qty:
-                    data[ID]["Quantity"] -= qty
-                    total = qty * data[ID]["Price"]
-                    dump_inventory(data)
-
-                    invoice = ''.join(random.choices(string.ascii_letters, k=4))
-                    history[invoice] = {
-                        "ID": ID,
-                        "City": city,
-                        "Name": data[ID]["Name"],
-                        "Quantity": qty,
-                        "Unit_Price": data[ID]["Price"],
-                        "Total_Price": total,
-                        "Date": time.strftime("%d-%B-%Y"),
-                        "Time": str(datetime.now().time())
-                    }
-                    dump_Sale(history)
-                    messagebox.showinfo("Success", "Sale processed successfully")
-                    self.back_to_menu()
-                else:
-                    messagebox.showerror("Error", "Invalid quantity")
-            else:
-                messagebox.showerror("Error", "Product ID not found")
-
-        tk.Button(self, text="Sell", command=sell, bg="#4CAF50", fg="white").pack(pady=10)
-        tk.Button(self, text="Back", command=self.back_to_menu).pack()
-
-    def update_stock_ui(self):
-        self.clear_widgets()
-
-        tk.Label(self, text="Update Stock", font=("Arial", 16)).pack(pady=10)
-
-        tk.Label(self, text="Enter Product ID:").pack()
-        id_entry = tk.Entry(self)
-        id_entry.pack()
-
-        tk.Label(self, text="Enter Quantity (+/-):").pack()
-        qty_entry = tk.Entry(self)
-        qty_entry.pack()
+    def update_stock(self):
+        inventory = load_inventory()
 
         def update():
-            ID = id_entry.get()
-            try:
-                change = int(qty_entry.get())
-            except ValueError:
-                messagebox.showerror("Error", "Enter valid number")
+            ID = entry_id.get()
+            qty = entry_qty.get()
+            if ID not in inventory:
+                messagebox.showerror("Error", "Product ID not found!")
                 return
+            try:
+                qty = int(qty)
+            except ValueError:
+                messagebox.showerror("Error", "Quantity must be integer!")
+                return
+            inventory[ID]["Quantity"] += qty
+            dump_inventory(inventory)
+            messagebox.showinfo("Success", f"Updated stock. New Quantity: {inventory[ID]['Quantity']}")
+            top.destroy()
 
-            data = load_inventory()
-            if ID in data:
-                data[ID]["Quantity"] += change
-                dump_inventory(data)
-                messagebox.showinfo("Success", f"New Quantity: {data[ID]['Quantity']}")
-                self.back_to_menu()
-            else:
-                messagebox.showerror("Error", "Product ID not found")
+        top = tk.Toplevel(self.root)
+        top.title("Update Stock")
+        top.geometry("350x200")
+        top.configure(bg="#fab1a0")
 
-        tk.Button(self, text="Update", command=update, bg="#4CAF50", fg="white").pack(pady=10)
-        tk.Button(self, text="Back", command=self.back_to_menu).pack()
+        tk.Label(top, text="Product ID:", bg="#fab1a0").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+        entry_id = tk.Entry(top); entry_id.grid(row=0, column=1)
 
-    def delete_inventory_ui(self):
-        if messagebox.askyesno("Warning", "Are you sure you want to delete all inventory data?"):
-            with open(INVENTORYFILE, 'w') as file:
-                json.dump({}, file)
-            messagebox.showinfo("Deleted", "Inventory cleared successfully")
+        tk.Label(top, text="Quantity (+/-):", bg="#fab1a0").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+        entry_qty = tk.Entry(top); entry_qty.grid(row=1, column=1)
 
-    def clear_widgets(self):
-        for widget in self.winfo_children():
-            widget.destroy()
+        tk.Button(top, text="Update", command=update, bg="#d63031", fg="white", width=15).grid(row=2, columnspan=2, pady=20)
 
-if __name__ == '__main__':
-    app = InventoryApp()
-    app.mainloop()
+    def view_inventory(self):
+        data = load_inventory()
+        if not data:
+            self.print_output("⚠️ No items in inventory.\n")
+            return
+        output = "Current Inventory:\n" + "-" * 30 + "\n"
+        for ID, d in data.items():
+            total = d["Quantity"] * d["Price"]
+            output += f"ID: {ID}\nName: {d['Name']}\nQuantity: {d['Quantity']}\nPrice: Rs{d['Price']}\nTotal: Rs{total}\nBatch No: {d['Batch_No']}\n{'-'*30}\n"
+        self.print_output(output)
+
+    def view_history(self):
+        data = load_Sale()
+        if not data:
+            self.print_output("⚠️ No sales history available.\n")
+            return
+        output = "Sales History:\n" + "-" * 30 + "\n"
+        for ID, d in data.items():
+            output += f"City: {d['City']}\nName: {d['Name']}\nQty: {d['Quantity']}\nPrice: Rs{d['Unit_Price']}\nTotal: Rs{d['Total_Price']}\nDate: {d['Date']} Time: {d['Time']}\n{'-'*30}\n"
+        self.print_output(output)
+
+    def delete_inventory(self):
+        if messagebox.askyesno("Confirm Delete", "Are you sure you want to delete all inventory?"):
+            with open(INVENTORYFILE, 'w') as f:
+                json.dump({}, f)
+            self.print_output("Inventory cleared successfully.")
+
+root = tk.Tk()
+app = InventoryApp(root)
+root.mainloop()
+ 
