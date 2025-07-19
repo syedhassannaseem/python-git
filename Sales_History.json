@@ -142,5 +142,15 @@
         "Total_Price": 850.0,
         "Date": "19-July-2025",
         "Time": "21:24:37.546593"
+    },
+    "DKMV": {
+        "ID": "001",
+        "City": "Bahawalpur",
+        "Name": "Acidite",
+        "Quantity": 10,
+        "Unit_Price": 170.0,
+        "Total_Price": 1700.0,
+        "Date": "19-July-2025",
+        "Time": "21:39:41.451831"
     }
 }
