@@ -4,7 +4,7 @@
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
-Welcome to my first Python repository! This is where I'm learning, experimenting, and building cool stuff with Python. 
+<h3>Welcome to my first Python repository! This is where I'm learning, experimenting, and building cool stuff with Python.</h3>
 
 ## 🌟 Features
 
