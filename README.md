@@ -16,5 +16,5 @@ Welcome to my first Python repository! This is where I'm learning, experimenting
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/your-syedhassannaseem/your-python-git.git
-cd your-pythongit
+git clone https://github.com/syedhassannaseem/python-git.git
+cd pythongit
